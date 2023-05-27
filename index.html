@@ -1,0 +1,176 @@
+<html>
+
+<head>
+    <title>Pa'O Am2 to Unicode</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href='https://mmwebfonts.comquas.com/fonts/?font=pyidaungsu' />
+    <style>
+        header {
+            text-align: center;
+        }
+
+        header h2 {
+            display: none;
+        }
+
+        h3 {
+            text-align: center;
+        }
+
+        body,
+        section,
+        #container {
+            margin: 0px;
+            padding: 0px;
+        }
+
+        footer {
+            clear: both;
+            text-align: center;
+            padding-top: 30px;
+            font-family:Pyidaungsu;
+        }
+
+        textarea {
+            max-width: 100%;
+            min-width: 100%;
+            min-height: 300px;
+            padding: 10px;
+            line-height: 1.8em;
+            font-size: 1em;
+            border: 1px solid #5799DA;
+            text-align: left;
+        }
+
+        #textContainer {
+            text-align: center;
+        }
+
+        #From {
+            display: inline-block;
+            width: 48%;
+            padding-left: 10px;
+        }
+
+        #To {
+            display: inline-block;
+            width: 48%;
+            padding-right: 10px;
+            font-family:Pyidaungsu;
+        }
+
+        @media(max-width:701px) {
+
+
+            #textContainer {
+                padding: 5px;
+            }
+
+            #From {
+                width: 100%;
+                margin: 0px;
+                padding: 0px;
+
+            }
+
+            #To {
+                width: 100%;
+                margin: 0px;
+                padding: 0px;
+            }
+
+            textarea {
+                min-height: 200px;
+                font-size: .9em;
+                padding: 10px !important;
+            }
+        }
+    </style>
+    <script src="./app.js"></script>
+</head>
+
+<body>
+    <div id="container">
+        <header>
+            <h2>Pa'O Am2 to Unicode</h2>
+        </header>
+        <br />
+
+        <div id="textContainer">
+
+            <section id="From">
+                <h3>Am2</h3>
+                <textarea id="from" onfocus="handleOnFocus(this)" onblur="handleOnBlur()"></textarea>
+                <button onclick="copy('from')">Copy text</button>
+            </section>
+
+            <section id="To">
+                <h3>Unicode</h3>
+                <textarea id="to" onfocus="handleOnFocus(this)" onblur="handleOnBlur()"></textarea>
+                <button onclick="copy('to')">Copy text</button>
+            </section>
+        </div>
+        <div id="textContainer">
+            <section id="buttons">
+                <input type="button" value="Clear Text" onclick="clearText()">
+            </section>
+        </div>
+        <footer>
+            <p>Note: စမ်းသပ်အဆင့်သာရှိသေးသည်။<br>
+                ပြီးပြည့်စုံသော Converter ဖြစ်လာစေရန် မိမိမှာရှိတဲ့ Am2 ဖောင့်ဖြင့်ရေးထားသောစာများကို ထည့်သွင်း၍စမ်းပေးပါ။<br>
+                အဆင်မပြေသည့်စကားလုံးများတွေ့ပါကပြင်ဆင်ဖြည့်စွက်နိုင်အောင် <a href="https://m.me/iamHtetz">@iamHtetz</a> ကိုအကြောင်းကြားပေးပါ။</p>
+            </footer>
+        <p>
+    </div>
+
+    <script>
+        function copy(id) {
+            var copyText = document.getElementById(id);
+            copyText.select();
+            document.execCommand("copy");
+            alert("Copied the text: " + copyText.value);
+        }
+
+        var textFieldInFocus;
+        function handleOnFocus(form_element) {
+            textFieldInFocus = form_element;
+        }
+        function handleOnBlur() {
+            textFieldInFocus = null;
+        }
+
+        var from = document.getElementById("from");
+        var to = document.getElementById("to");
+
+        onchangeHandler(from, to, "to");
+
+        function clearText() {
+            from.value = "";
+            to.value = "";
+        }
+
+        function converter(textField, tochangeField) {
+            if (tochangeField != textFieldInFocus) {
+                tochangeField.value = convert(textField.value);
+            }
+        }
+
+        function onchangeHandler(textField, tochangeField) {
+            if (textField.addEventListener) {
+                textField.addEventListener('input', function () {
+                    converter(textField, tochangeField);
+                }, false);
+            } else if (textField.attachEvent) {
+                textField.attachEvent('onpropertychange', function () {
+                    // IE
+                    converter(textField, tochangeField);
+                });
+            }
+
+        }
+
+    </script>
+</body>
+
+</html>
