@@ -5,21 +5,44 @@ import org.json.JSONArray
 import org.json.JSONObject
 
 /**
- * ASCII စနစ်ရေးထားသောပအိုဝ်းစာများကို Unicode စံစနစ်ကိုက်ညီသောစာများအဖြစ်ပြောင်းပေးနိုင်ရန်ဖြစ်သည်။
+ * ASCII စနစ်ဖြင့်ရေးထားသောပအိုဝ်းစာများကို Unicode စံစနစ်ကိုက်ညီသောစာများအဖြစ်ပြောင်းပေးနိုင်ရန်ဖြစ်သည်။
  */
 class AM2{
-    companion object{
-        val am2unicode_rules = mapOf(
-            "\u0021" to "\u100d", // ! => ဍ
-            "\u0022" to "\u1013", // " => ဓ
-            "\u0023" to "\u100b", // # => ဋ
-            "\u0024" to "\u103c\u103d", // $ => ြွ
-            "\u0026" to "\u101b", // & => ရ
-            "\u0027" to "\u1012", // ' => ဒ
-            "\u002a" to "\u1002", // * => ဂ
-            "\u002c" to "\u101a", // , => ယ
-            "\u002e" to "\u108f", // . => ႏ
-            "\u002f" to "\u104b", // / => ။
+        private val am2UnicodeRules = mapOf(
+            "\u0031\u2044\u0032" to "\u101b", // 1/2 => ရ
+            "\u0033\u2044\u0034" to "\u1039\u1002", // 3/4 => ္ဂ
+            "\u005D\u005D" to "\u201C", // ]] => “
+            "\u007D\u007D" to "\u201D", // }} => ”
+            "\u0020\u0308" to "\u1039\u1013", // }} => ”
+            "\u0031\u0065" to "\u100D\u1039\u100E\u1014", // 1e => ဍ္ဎန
+            "\u0074\u0020\u0048" to "\u1021\u1036", // t H => အံ
+
+            "\u0061" to "\u1031", // a => ေ
+            "\u0062" to "\u1018", // b => ဘ
+            "\u0063" to "\u1001", // c => ခ
+            "\u0064" to "\u102d", // d => ိ
+            "\u0065" to "\u1014", // e => န
+            "\u0066" to "\u103a", // f => ်
+            "\u0067" to "\u102b", // g => ါ
+            "\u0068" to "\u1037", // h => ့
+            "\u0069" to "\u1004", // i => င
+            "\u006a" to "\u103c", // j => ြ
+            "\u006b" to "\u102f", // k => ု
+            "\u006c" to "\u1030", // l => ူ
+            "\u006d" to "\u102c", // m => ာ
+            "\u006e" to "\u100a", // n => ည
+            "\u006f" to "\u101e", // o => သ
+            "\u0070" to "\u1005", // p => စ
+            "\u0071" to "\u1006", // q => ဆ
+            "\u0072" to "\u1019", // r => မ
+            "\u0073" to "\u103b", // s => ျ
+            "\u0074" to "\u1021", // t => အ
+            "\u0075" to "\u1000", // u => က
+            "\u0076" to "\u101c", // v => လ
+            "\u0077" to "\u1010", // w => တ
+            "\u0078" to "\u1011", // x => ထ
+            "\u0079" to "\u1015", // y => ပ
+            "\u007a" to "\u1016", // z => ဖ
             "\u0030" to "\u1040", // 0 => ၀
             "\u0031" to "\u1041", // 1 => ၁
             "\u0032" to "\u1042", // 2 => ၂
@@ -30,6 +53,20 @@ class AM2{
             "\u0037" to "\u1047", // 7 => ၇
             "\u0038" to "\u1048", // 8 => ၈
             "\u0039" to "\u1049", // 9 => ၉
+
+
+
+            "\u0021" to "\u100d", // ! => ဍ
+            "\u0022" to "\u1013", // " => ဓ
+            "\u0023" to "\u100b", // # => ဋ
+            "\u0024" to "\u103c\u103d", // $ => ြွ
+            "\u0026" to "\u101b", // & => ရ
+            "\u0027" to "\u1012", // ' => ဒ
+            "\u002a" to "\u1002", // * => ဂ
+            "\u002c" to "\u101a", // , => ယ
+            "\u002e" to "\u108f", // . => ႏ
+            "\u002f" to "\u104b", // / => ။
+
             "\u003a" to "\u102b\u103a", // : => ါ်
             "\u003b" to "\u1038", // ; => း
             "\u003c" to "\u103c\u103d", // < => ြွ
@@ -66,34 +103,8 @@ class AM2{
             "\u005c" to "\u104f", // \ => ၏
             "\u005d" to "\u2018", // ] => ‘
             "\u005e" to "\u002f", // ^ => /
-            "\u005f" to "\u0078", // _ => x
             "\u0060" to "\u103c", // ` => ြ
-            "\u0061" to "\u1031", // a => ေ
-            "\u0062" to "\u1018", // b => ဘ
-            "\u0063" to "\u1001", // c => ခ
-            "\u0064" to "\u102d", // d => ိ
-            "\u0065" to "\u1014", // e => န
-            "\u0066" to "\u103a", // f => ်
-            "\u0067" to "\u102b", // g => ါ
-            "\u0068" to "\u1037", // h => ့
-            "\u0069" to "\u1004", // i => င
-            "\u006a" to "\u103c", // j => ြ
-            "\u006b" to "\u102f", // k => ု
-            "\u006c" to "\u1030", // l => ူ
-            "\u006d" to "\u102c", // m => ာ
-            "\u006e" to "\u100a", // n => ည
-            "\u006f" to "\u101e", // o => သ
-            "\u0070" to "\u1005", // p => စ
-            "\u0071" to "\u1006", // q => ဆ
-            "\u0072" to "\u1019", // r => မ
-            "\u0073" to "\u103b", // s => ျ
-            "\u0074" to "\u1021", // t => အ
-            "\u0075" to "\u1000", // u => က
-            "\u0076" to "\u101c", // v => လ
-            "\u0077" to "\u1010", // w => တ
-            "\u0078" to "\u1011", // x => ထ
-            "\u0079" to "\u1015", // y => ပ
-            "\u007a" to "\u1016", // z => ဖ
+            "\u005f" to "\u0078", // _ => x
             "\u007b" to "\u1027", // { => ဧ
             "\u007c" to "\u100b\u1039\u100c", // | => ဋ္ဌ
             "\u007d" to "\u0027", // } => '
@@ -117,7 +128,10 @@ class AM2{
             "\u00b3" to "\u1039\u100b", // ³ => ္ဋ
             "\u00b4" to "\u1039\u1012", // ´ => ္ဒ
             "\u00B5" to "\u00A7", // µ => §
-            "\u00b6" to "\u100f\u1039\u100f", // ¶ => ဏ္ဏ
+
+//            "\u00b6" to "\u100f\u1039\u100f", // ¶ => ဏ္ဏ
+            "\u00b6" to "\u108F", // ¶ => ႏ
+
             "\u00b8" to "\u1014\u1039\u1014", // ¸ => န္န
             "\u00b9" to "\u100d\u1039\u100e", // ¹ => ဍ္ဎ
             "\u00ba" to "\u100f\u1039\u100c", // º => ဏ္ဌ
@@ -165,7 +179,10 @@ class AM2{
             "\u00e4" to "\u1039\u1006", // ä => ္ဆ
             "\u00e5" to "\u1039\u1010", // å => ္တ
             "\u00e6" to "\u1039\u1016", // æ => ္ဖ
+
             "\u00e7" to "\u002c", // ç => ,
+            "\u00e7" to "\uAA7B", // ç => ꩻ
+
             "\u00e8" to "\u005f", // è => _
             "\u00e9" to "\u1039\u1014", // é => ္န
             "\u00ea" to "\u103c\u102f", // ê => ြု
@@ -203,8 +220,8 @@ class AM2{
             "\u2018" to "\u1007\u1039\u1007", // ‘ => ဇ္ဇ
             "\u2019" to "\u1000\u1039\u1001", // ’ => က္ခ
             "\u201a" to "\u005f", // ‚ => _
-            "\u201c" to "\u1005\u1039\u1006", // “ => စ္ဆ
-            "\u201d" to "\u003e\u003e", // ” => >>
+//            "\u201c" to "\u1005\u1039\u1006", // “ => စ္ဆ
+//            "\u201d" to "\u003e\u003e", // ” => >>
             "\u201e" to "\u2713", // „ => ✓
             "\u2020" to "\u1000\u1039\u1000", // † => က္က
             "\u2021" to "\u1002\u1039\u1003", // ‡ => ဂ္ဃ
@@ -218,10 +235,11 @@ class AM2{
             "\u2666" to "\u1014\u1039\u1010\u103d", // ♦ => န္တွ
             "\u266a" to "\u1026", // ♪ => ဦ
             "\u266b" to "\u2605", // ♫ => ★
-            "\ufb02" to "\u0021", // ﬂ => !
+            "\ufb02" to "\u0021", // ﬂ => !,
+            "\u0020\u0301" to "\u1039\u1012", //  ́ => ္ဒ,
         )
 
-        val fix_unicode_rules = mapOf(
+        private val reorderUnicodeRules = mapOf(
             // သဝေထိုး
             // နံပါတ် ၇ -> ရကောက်
             "(ေ)(၇)" to "ေရ",
@@ -248,6 +266,7 @@ class AM2{
             "(ြ)(၀)" to "ြဝ",
 
             "(ြ)([က-အ])" to "$2$1",
+            "(ြ)(ွ)([က-အ])" to "$3$1$2",
 
             // အသတ်
             "([က-အဿ])(င်္)" to "$2$1",
@@ -255,15 +274,17 @@ class AM2{
             // တစ်ချောင်းငင်
             "(ု)?(ူ)?(ိ)?(ီ)?" to "$3$4$1$2",
 
+            // နောက်ပစ်
+            "(ဲ)?(ူ)?(ု)?" to "$2$3$1",
+
             // သုည -> ဝလုံး
             "၀(ိ|ီ|ု|ူ|ံ|့|ှ|်|း|ါ|ာ|[က-အ]်|ျ|ဲ|ႏ|ꩻ|ွ)" to "ဝ$1",
             "၇(ိ|ီ|ု|ူ|ံ|့|ှ|်|း|ါ|ာ|[က-အ]်|ျ|ဲ|ႏ|ꩻ|ွ)" to "ရ$1",
         )
-    }
 
     private fun transform(am2: String): String {
         var data = am2
-        am2unicode_rules.forEach {
+        am2UnicodeRules.forEach {
             val from = it.key
             val to = it.value
             data = data.replace(from,to)
@@ -271,9 +292,9 @@ class AM2{
         return data
     }
 
-    private fun fixInUnicode(input: String): String {
+    private fun reorderUnicode(input: String): String {
         var out = input
-        fix_unicode_rules.forEach {
+        reorderUnicodeRules.forEach {
             out = out.replace(it.key.toRegex(),it.value)
         }
         return out
@@ -281,18 +302,18 @@ class AM2{
 
     fun convert(am2Text: String): String {
         val data = transform(am2Text)
-        return fixInUnicode(data)
+        return reorderUnicode(data)
     }
 
     @TestOnly
     // တခြား Language များအတွက် Json ထုတ်ရန်
     fun toJs(){
         println(
-            "var am2unicode_rules = ${toJSON(am2unicode_rules)}"
+            "var am2unicode_rules = ${toJSON(am2UnicodeRules)}"
         )
 
         println(
-            "var fix_unicode_rules = ${toJSON(fix_unicode_rules)}"
+            "var fix_unicode_rules = ${toJSON(reorderUnicodeRules)}"
         )
     }
 
