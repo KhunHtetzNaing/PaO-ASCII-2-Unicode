@@ -16,7 +16,6 @@ class AM2{
             "\u0020\u0308" to "\u1039\u1013", // }} => ”
             "\u0031\u0065" to "\u100D\u1039\u100E\u1014", // 1e => ဍ္ဎန
             "\u0074\u0020\u0048" to "\u1021\u1036", // t H => အံ
-
             "\u0061" to "\u1031", // a => ေ
             "\u0062" to "\u1018", // b => ဘ
             "\u0063" to "\u1001", // c => ခ
@@ -53,9 +52,6 @@ class AM2{
             "\u0037" to "\u1047", // 7 => ၇
             "\u0038" to "\u1048", // 8 => ၈
             "\u0039" to "\u1049", // 9 => ၉
-
-
-
             "\u0021" to "\u100d", // ! => ဍ
             "\u0022" to "\u1013", // " => ဓ
             "\u0023" to "\u100b", // # => ဋ
@@ -66,7 +62,6 @@ class AM2{
             "\u002c" to "\u101a", // , => ယ
             "\u002e" to "\u108f", // . => ႏ
             "\u002f" to "\u104b", // / => ။
-
             "\u003a" to "\u102b\u103a", // : => ါ်
             "\u003b" to "\u1038", // ; => း
             "\u003c" to "\u103c\u103d", // < => ြွ
@@ -128,10 +123,8 @@ class AM2{
             "\u00b3" to "\u1039\u100b", // ³ => ္ဋ
             "\u00b4" to "\u1039\u1012", // ´ => ္ဒ
             "\u00B5" to "\u00A7", // µ => §
-
 //            "\u00b6" to "\u100f\u1039\u100f", // ¶ => ဏ္ဏ
             "\u00b6" to "\u108F", // ¶ => ႏ
-
             "\u00b8" to "\u1014\u1039\u1014", // ¸ => န္န
             "\u00b9" to "\u100d\u1039\u100e", // ¹ => ဍ္ဎ
             "\u00ba" to "\u100f\u1039\u100c", // º => ဏ္ဌ
@@ -240,16 +233,6 @@ class AM2{
         )
 
         private val reorderUnicodeRules = mapOf(
-            // သဝေထိုး
-            // နံပါတ် ၇ -> ရကောက်
-            "(ေ)(၇)" to "ေရ",
-            // သုည -> ဝလုံး
-            "(ေ)(၀)" to "ေဝ",
-
-            "(ေ)(ြ)?([က-အဿ])(ွ)?(ျ)?(ု)?(ှ)?" to "$3$2$5$6$4$7$1",
-
-            // သဝေထိုး + စာလုံးဆင့်
-            "([က-အ])(ေ)(္[က-အ])" to "$1$3$2",
 
             // သေးသေးတင်
             "(ံ)(ု)?(ူ)?" to "$2$3$1",
@@ -275,11 +258,22 @@ class AM2{
             "(ု)?(ူ)?(ိ)?(ီ)?" to "$3$4$1$2",
 
             // နောက်ပစ်
-            "(ဲ)?(ူ)?(ု)?" to "$2$3$1",
+            "(ဲ)?(ူ)?(ု)?(ျ)?(ြ)?" to "$2$3$4$5$1",
 
             // သုည -> ဝလုံး
             "၀(ိ|ီ|ု|ူ|ံ|့|ှ|်|း|ါ|ာ|[က-အ]်|ျ|ဲ|ႏ|ꩻ|ွ)" to "ဝ$1",
             "၇(ိ|ီ|ု|ူ|ံ|့|ှ|်|း|ါ|ာ|[က-အ]်|ျ|ဲ|ႏ|ꩻ|ွ)" to "ရ$1",
+
+            // သဝေထိုး
+            // နံပါတ် ၇ -> ရကောက်
+            "(ေ)(၇)" to "ေရ",
+            // သုည -> ဝလုံး
+            "(ေ)(၀)" to "ေဝ",
+
+            "(ေ)(ြ)?([က-အဿ])(ြ)?(ွ)?(ျ)?(ွ)?(ု)?(ှ)?" to "$3$2$4$6$5$7$1$8$9",
+
+            // သဝေထိုး + စာလုံးဆင့်
+            "([က-အ])(ေ)(္[က-အ])" to "$1$3$2",
         )
 
     private fun transform(am2: String): String {
@@ -305,15 +299,78 @@ class AM2{
         return reorderUnicode(data)
     }
 
-    @TestOnly
-    // တခြား Language များအတွက် Json ထုတ်ရန်
+    fun toDart(){
+        println(
+            "class AM2 {\n" +
+                    "  final am2UnicodeRules = ${toJSON(am2UnicodeRules).replace("$","\\$")};\n" +
+                    "\n" +
+                    "  final reorderUnicodeRules = ${toJSON(reorderUnicodeRules).replace("$","#")};\n" +
+                    "\n" +
+                    "  String transform(String am2) {\n" +
+                    "    for (var item in am2UnicodeRules) {\n" +
+                    "      final from = item[\"from\"]!;\n" +
+                    "      final to = item[\"to\"]!;\n" +
+                    "      am2 = am2.replaceAll(from, to);\n" +
+                    "    }\n" +
+                    "    return am2;\n" +
+                    "  }\n" +
+                    "\n" +
+                    "  String reorderUnicode(String input) {\n" +
+                    "    for (var item in reorderUnicodeRules) {\n" +
+                    "      final from = item[\"from\"]!;\n" +
+                    "      final to = item[\"to\"]!;\n" +
+                    "      input = input.replaceAllMapped(RegExp(from), (match1) {\n" +
+                    "        return to.replaceAllMapped(RegExp(r\"#(\\d)\"), (match2) {\n" +
+                    "          final index = match2.group(1);\n" +
+                    "          var t = index != null ? match1.group(int.parse(index)) : null;\n" +
+                    "          return t ?? \"\";\n" +
+                    "        });\n" +
+                    "      });\n" +
+                    "    }\n" +
+                    "    return input;\n" +
+                    "  }\n" +
+                    "\n" +
+                    "  String convert(String am2Text) {\n" +
+                    "    final data = transform(am2Text);\n" +
+                    "    return reorderUnicode(data);\n" +
+                    "  }\n" +
+                    "}\n"
+        )
+    }
+
     fun toJs(){
         println(
-            "var am2unicode_rules = ${toJSON(am2UnicodeRules)}"
-        )
-
-        println(
-            "var fix_unicode_rules = ${toJSON(reorderUnicodeRules)}"
+            "const am2unicode_rules = ${toJSON(am2UnicodeRules)};\n" +
+                    "const fix_unicode_rules = ${toJSON(reorderUnicodeRules)};\n" +
+                    "\n" +
+                    "function transform(am2) {\n" +
+                    "    var max_loop = am2unicode_rules.length;\n" +
+                    "    for (i = 0; i < max_loop; i++) {\n" +
+                    "        var data = am2unicode_rules[i];\n" +
+                    "        var from = data[\"from\"];\n" +
+                    "        var to = data[\"to\"];\n" +
+                    "        am2 = am2.replaceAll(from, to);\n" +
+                    "    }\n" +
+                    "    return am2;\n" +
+                    "}\n" +
+                    "\n" +
+                    "function reorderUnicode(unicode) {\n" +
+                    "    var max_loop = fix_unicode_rules.length;\n" +
+                    "    for (i = 0; i < max_loop; i++) {\n" +
+                    "        var data = fix_unicode_rules[i];\n" +
+                    "        var from = data[\"from\"];\n" +
+                    "        var to = data[\"to\"];\n" +
+                    "\n" +
+                    "        var from_regex = new RegExp(from, \"g\");\n" +
+                    "        unicode = unicode.replace(from_regex, to);\n" +
+                    "    }\n" +
+                    "    return unicode;\n" +
+                    "}\n" +
+                    "\n" +
+                    "function convert(am2) {\n" +
+                    "    var uni = transform(am2);\n" +
+                    "    return reorderUnicode(uni);\n" +
+                    "}"
         )
     }
 
@@ -328,4 +385,8 @@ class AM2{
         }
         return array.toString(1)
     }
+}
+
+fun main() {
+    AM2().toDart()
 }
